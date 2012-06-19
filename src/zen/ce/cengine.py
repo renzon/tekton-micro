@@ -54,20 +54,19 @@ prefix='''
 last_import_error: '''
       
 def find_attr(obj,att_name,default_name):
-  try:
-    return getattr(obj,att_name)
-  except AttributeError:
-    return getattr(obj,default_name)
+    try:
+        return getattr(obj,att_name)
+    except AttributeError:
+        return getattr(obj,default_name)
   
 def find(obj,params,default_name):
-  try:
-    if params:
-      att=getattr(obj,params[-1])
-      params.pop()
-      return att 
-  except AttributeError:
-    pass
-  return getattr(obj,default_name)
+    try:
+        if params:
+            att=getattr(obj,params[-1])
+            params.pop()
+            return att 
+    except AttributeError: pass
+    return getattr(obj,default_name)
 
   
 #Utilities methods
@@ -92,8 +91,8 @@ def to_handler(path):
     while len(path_slices) >= 0 :
         module_name = ".".join(path_slices)
         if not module_name:
-          module_name=".".join(["home",config.indicator])
-          del params[0]
+            module_name=".".join(["home",config.indicator])
+            del params[0]
         try:
             module = __import__(module_name)
         except ImportError as e:
@@ -119,15 +118,15 @@ def to_handler(path):
     return (requestHandler, requestHandlerMethod.__name__, params)
   
 def dec(fcn):
-  def f(*args):
-    url=fcn(*args).replace("/"+config.indicator,"")
-    return url or "/" 
-  return functools.update_wrapper(f, fcn)
+    def f(*args):
+        url=fcn(*args).replace("/"+config.indicator,"")
+        return url or "/" 
+    return functools.update_wrapper(f, fcn)
 
 def remove_home_index(string):
-  args=string.split("/")
-  args=[a for a in args if a!="home" and a!="index"]
-  return "/".join(args)
+    args=string.split("/")
+    args=[a for a in args if a!="home" and a!="index"]
+    return "/".join(args)
 
 
 @dec
@@ -140,7 +139,7 @@ def to_path(handler,*args):
     """
     params=""
     for a in args:
-      params+="/"+str(a)
+        params+="/"+str(a)
     if handler != None:
         if isinstance(handler, MethodType):
             return remove_home_index(extract_full_module(handler.im_class) + "/" + handler.__name__)+params
@@ -154,8 +153,3 @@ def to_path(handler,*args):
 
 def extract_full_module(klass):
     return "/" + (klass.__module__ + "/" + klass.__name__).replace(".", "/")
-
-
-
-
-

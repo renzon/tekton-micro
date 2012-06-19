@@ -21,7 +21,7 @@ class Response():
 
 
 class TestRequestHandler(unittest.TestCase):
-    def testGet(self):
+    def test_get(self):
         handler=BaseHandler()
         request=Request()
         request.path="br/oneTest/ARequestHandlerStub/aRequestMethod"
