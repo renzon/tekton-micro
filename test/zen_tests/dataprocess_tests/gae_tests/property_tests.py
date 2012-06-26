@@ -56,11 +56,9 @@ class CepTests(unittest.TestCase):
     
     def test_password(self):
         pw=property.Password(pw="password")
-        self.assertIsNotNone(pw.hash)
-        self.assertIsNotNone(pw.salt)
-        pw2=property.Password(pw.hash)
-        self.assertEqual(pw.hash, pw2.hash)
-        self.assertEqual(pw.salt, pw2.salt)
+        self.assertIsNotNone(pw.hs)
+        pw2=property.Password(pw.hs)
+        self.assertEqual(pw.hs, pw2.hs)
         
     #    Wrong Pw
         self.assertFalse(pw2.check("passwor"))
@@ -69,6 +67,16 @@ class CepTests(unittest.TestCase):
         
 #   right Pw
         self.assertTrue(pw2.check("password"))
+        
+    #Wrong Pepper
+        pw=property.Password(pw="password",pepper="pepper")
+        self.assertFalse(pw.check("password"))
+        self.assertFalse(pw.check("password","peppe"))
+        self.assertFalse(pw.check("password","pepperr"))
+        
+    #Right Pepper
+        self.assertTrue(pw.check("password","pepper"))
+    
 #    saving the as property
         class C(ndb.Model):
             pw=property.PasswordProperty()

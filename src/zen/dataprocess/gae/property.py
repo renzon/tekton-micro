@@ -3,6 +3,7 @@ from google.appengine.api.datastore_errors import BadValueError
 import hashlib
 import random
 from zen.dataprocess import validation, transform
+from webapp2_extras import security
 
 class BaseStringProperty(ndb.StringProperty):
     def transformation(self,value):
@@ -43,8 +44,6 @@ class BrPhoneProperty(BaseStringProperty):
     def transformation(self,value):
         return transform.brphone(value)
 
-  
-
 
 class BrCurrencyProperty(BaseIntegerProperty):
     def validation(self, value):
@@ -56,22 +55,17 @@ class BrCurrencyProperty(BaseIntegerProperty):
 
 
 class Password(object):
-    _divider="$"
-    def __init__(self,hash=None, pw=None):
-        if hash is None and  pw is None:
-            raise BadValueError("hash and pw can not be none at same time")
-        if hash:
-            self.hash=hash
-            self.salt=hash.split(Password._divider)[0]
+    def __init__(self,hs=None, pw=None,pepper=None):
+        if hs is None and  pw is None:
+            raise BadValueError("hs and pw can not be none at same time")
+        if hs:
+            self.hs=hs
         else:
-            self.salt=str(random.random())
-            hash=hashlib.sha512(self.salt+pw).hexdigest()
-            self.hash=self.salt+Password._divider+hash
+            self.hs=security.generate_password_hash(pw,pepper=pepper)
 
     
-    def check(self, pw):
-        hash=hashlib.sha512(self.salt+pw).hexdigest()
-        return self.hash==self.salt+Password._divider+hash
+    def check(self, pw,pepper=None):
+        return security.check_password_hash(pw, self.hs, pepper)
       
     
     
@@ -80,9 +74,9 @@ class Password(object):
 
 class PasswordProperty(ndb.StringProperty):
     def _to_base_type(self, password):
-        return password.hash
+        return password.hs
 
-    def _from_base_type(self, hash):
-        return Password(hash)
+    def _from_base_type(self, hs):
+        return Password(hs)
 
 
