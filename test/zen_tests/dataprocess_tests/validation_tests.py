@@ -49,3 +49,11 @@ class ValidationTests(unittest.TestCase):
         self.assertEqual(None, lf("1.000.000,00"))
         self.assertEqual(None, lf("R$ 1.234.567,89"))
         
+    def test_brdate(self):
+        lf=validation.brdate    
+        self.assertEqual(validation.BR_ERROR_MSGS[validation.INVALID_BR_DATE], lf("13/13/1982"))
+        self.assertEqual(validation.BR_ERROR_MSGS[validation.INVALID_BR_DATE], lf("32/12/1982"))
+        self.assertEqual(validation.BR_ERROR_MSGS[validation.INVALID_BR_DATE], lf("2/3/4"))
+        self.assertEqual(None, lf("02/09/1982"))
+        self.assertEqual(None, lf("31/12/1982"))
+        

@@ -6,6 +6,8 @@ Created on 12/07/2011
 '''
 from google.appengine.ext import ndb
 from zen.dataprocess import validation,transform as trans
+from zen.dataprocess.gae import property as prop
+
 
 
 REQUIRED_FIELD_ERROR_MSG=u"Campo Obrigatório"
@@ -21,52 +23,58 @@ def choice_validator_generator(choices):
             return INVALID_OPTION_MSG
     return v
 
-def _handle_db_propert_attrs(property,validator=lambda v: None):
-    if property._required:
+def _handle_db_propert_attrs(ppt,validator=lambda v: None):
+    if ppt._required:
         validator= validation.composition(validation.required_str,\
                 validator)
-    if property._choices:
-        validator= validation.composition(choice_validator_generator(property._choices),\
+    if ppt._choices:
+        validator= validation.composition(choice_validator_generator(ppt._choices),\
                 validator)
     return validator
 
-def boolean_validator_generator(property):
-    return _handle_db_propert_attrs(property,validation.boolean_validator)
+def boolean_validator_generator(ppt):
+    return _handle_db_propert_attrs(ppt,validation.boolean_validator)
     
     
-def int_validator_generator(property):
-    return _handle_db_propert_attrs(property,validation.int_validator)
+def int_validator_generator(ppt):
+    return _handle_db_propert_attrs(ppt,validation.int_validator)
 
-def float_validator_generator(property):
-    return _handle_db_propert_attrs(property,validation.float_validator)
+def float_validator_generator(ppt):
+    return _handle_db_propert_attrs(ppt,validation.float_validator)
+
+def date_validator_generator(ppt):
+    return _handle_db_propert_attrs(ppt,validation.brdate)
 
 
-
-
-def string_validator_generator(property):
-    return _handle_db_propert_attrs(property)
+def string_validator_generator(ppt):
+    return _handle_db_propert_attrs(ppt)
 
 
 DEFAULT_VALIDATORS={ndb.BooleanProperty:boolean_validator_generator,\
     ndb.IntegerProperty:int_validator_generator,\
     ndb.FloatProperty:float_validator_generator,\
+    ndb.DateProperty:date_validator_generator,\
+    ndb.DateTimeProperty:date_validator_generator,\
     ndb.StringProperty:string_validator_generator
     }
 
 DEFAULT_TRANSFORMATIONS={ndb.BooleanProperty:trans.to_boolean,\
     ndb.FloatProperty:trans.to_float,\
     ndb.IntegerProperty:trans.to_int,\
-    ndb.StringProperty:trans.to_none
-    }
+    ndb.StringProperty:trans.to_none,\
+    ndb.DateProperty:trans.brdate,\
+    ndb.DateTimeProperty:trans.brdate,\
+    prop.PasswordProperty:lambda k: prop.Password(pw=k)}
 
-def _validate_generator(property):
+def _validate_generator(ppt):
     def validate(value):
-        vld=getattr(property, "validation",lambda k:None)
-        validator=_handle_db_propert_attrs(property,vld)
+        vld=getattr(ppt, "validation",lambda k:None)
+        validator=_handle_db_propert_attrs(ppt,vld)
         error=validator(value)
         if error: return error
         try:
-            property._validate(value)
+            if value is not None:
+                ppt._validate(value)
             return None
         except Exception,e:
             msg=str(e)
@@ -75,11 +83,11 @@ def _validate_generator(property):
             return INVALID_FIELD
     return validate
 
-def default_validator(property):
-    return DEFAULT_VALIDATORS.get(property.__class__,_validate_generator)(property)
+def default_validator(ppt):
+    return DEFAULT_VALIDATORS.get(ppt.__class__,_validate_generator)(ppt)
 
-def transform(property):
-    return DEFAULT_TRANSFORMATIONS.get(property.__class__,trans.to_none)
+def transform(ppt):
+    return DEFAULT_TRANSFORMATIONS.get(ppt.__class__,trans.to_none)
 
 formBase='''
           <div class="control-group{{' error' if errors.%(value)s is defined }}">

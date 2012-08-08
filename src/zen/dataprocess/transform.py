@@ -4,6 +4,7 @@ Created on 12/07/2011
 @author: Renzo Nuccitelli
 '''
 import functools
+import datetime
 
 def to_none(value):
     if value=="":
@@ -15,8 +16,7 @@ def not_none_or_empty_str(func):
         if value is None or value=="":
             return to_none(value)
         return func(value)
-    return functools.update_wrapper(f,func)
-    
+    return functools.update_wrapper(f,func)    
 
 @not_none_or_empty_str
 def to_boolean(value):
@@ -84,4 +84,6 @@ def brcurrency(value):
     value=value.replace("R$", "").replace(".","").replace(",","")
     return int(value)
 
-
+@not_none_or_empty_str
+def brdate(value):
+    return datetime.datetime.strptime(value,"%d/%m/%Y")

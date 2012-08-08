@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from zen.dataprocess import transform
 
+INVALID_BR_DATE="invalidBrDate"
 REQUIRED_MSG="requiredField"
 INVALID_BOOLEAN="invalidBoolean"
 INVALID_INT="invalidInt"
@@ -11,7 +12,8 @@ INVALID_LINK="invalidLink"
 BR_ERROR_MSGS = {"invalidMail":u"Email inválido", REQUIRED_MSG:u"Campo Obrigatório",
                INVALID_LINK:u"Link Inválido", INVALID_PHONE:u"Telefone Inválido. Exemplo válido: (12) 1212-1212",
                INVALID_CEP:u"CEP Inválido",INVALID_BOOLEAN:u"Opção Inválida","invalidvalueCurrency":u"Moeda Inválida",
-               INVALID_INT:u"Valor Inválido",INVALID_FLOAT:u"Valor Inválido","invalidChoice":u"Opção Inválida","invalidChoices":u"Opções Inválidas"}
+               INVALID_INT:u"Valor Inválido",INVALID_FLOAT:u"Valor Inválido","invalidChoice":u"Opção Inválida","invalidChoices":u"Opções Inválidas",\
+               INVALID_BR_DATE:u"Date Inválida"}
 
 def composition(*validators):
     def f(currentValidator,nextValidator):
@@ -86,4 +88,16 @@ def brcurrency(value):
     value=str(value)
     value=value.replace("R$", "")
     return float_validator(value)
+
+
+
+
+def brdate(value):
+    if value is None or value=="":
+        return None
+    try:
+        v=transform.brdate(value)
+        f=v
+    except: return BR_ERROR_MSGS[INVALID_BR_DATE]
+
 

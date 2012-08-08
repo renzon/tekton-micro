@@ -6,6 +6,8 @@ Created on 13/07/2011
 from google.appengine.ext import ndb
 import unittest
 from zen.dataprocess.gae import form
+from zen.dataprocess.gae.property import PasswordProperty, Password
+import datetime
 
 class Stub(ndb.Model):
     name=ndb.StringProperty(required=True)
@@ -17,6 +19,9 @@ class Stub(ndb.Model):
     i2=ndb.IntegerProperty(required=True)
     f=ndb.FloatProperty()
     f2=ndb.FloatProperty(required=True)
+    pw=PasswordProperty()
+    dt=ndb.DateProperty()
+    dtime=ndb.DateTimeProperty()
    
 
 f=form.Form(Stub)
@@ -51,6 +56,9 @@ class FormTests(unittest.TestCase):
         validRequest["f"]="0,0"
         validRequest["f2"]="1.000,00"
         validRequest["multiline"]="multiline"
+        validRequest["pw"]=None
+        validRequest["dt"]=None
+        validRequest["dtime"]=None
         self.assertEquals(validRequest,f.request_dict(validRequest))    
                   
         
@@ -60,18 +68,23 @@ class FormTests(unittest.TestCase):
         validRequest["i2"]="13"
         validRequest["f"]="0,0"
         validRequest["f2"]="1.000,00"
-        
+        validRequest["pw"]="abcd"
         validRequest["multiline"]="multiline"
+        validRequest["dt"]="31/12/1982"
+        validRequest["dtime"]="31/12/1982"
         
         modelDict={"name":"Foo","choice":"2","bo":True,"boreq":False}
         modelDict["i"]=0
         modelDict["i2"]=13
         modelDict["f"]=0.0
         modelDict["f2"]=1000.00
-        
         modelDict["multiline"]="multiline"
-        
-        self.assertEquals(modelDict,f.transform(validRequest))
+        modelDict["dt"]=datetime.datetime(1982,12,31)
+        modelDict["dtime"]=datetime.datetime(1982,12,31)
+        transformed=f.transform(validRequest)
+        p=transformed.pop("pw")
+        self.assertTrue(p.check("abcd"))
+        self.assertEquals(modelDict,transformed)
     def test_validate(self):
         invalidRequest={"name":"","choice":"3","bo":"ba","boreq":""}
         invalidRequest["i"]="a"
@@ -104,6 +117,19 @@ class FormTests(unittest.TestCase):
         f2=form.Form(Stub,("i2",))
         k=f2.transformations.get("i2",None)
         self.assertTrue(k is None)
+        
+        
+    def test_date_transformation(self):
+        k=f.transformations["dt"]
+        self.assertEquals(k(""),None)
+        self.assertEquals(k(None),None)
+        self.assertEquals(datetime.datetime(1982,12,31),k("31/12/1982"))
+        
+    def test_datetime_transformation(self):
+        k=f.transformations["dtime"]
+        self.assertEquals(k(""),None)
+        self.assertEquals(k(None),None)
+        self.assertEquals(datetime.datetime(1982,12,31),k("31/12/1982"))     
     
     def test_int_transformation(self):
         k=f.transformations["i2"]

@@ -5,6 +5,8 @@ Created on 12/07/2011
 '''
 import unittest
 from zen.dataprocess import transform
+import datetime
+
 
 
 class TrasnformTests(unittest.TestCase):
@@ -39,4 +41,11 @@ class TrasnformTests(unittest.TestCase):
     def test_brcurrency(self):
         t=transform.brcurrency
         self.assertEqual(123456789, t("1.234.567,89"))
-        self.assertEqual(123456789, t("R$ 1.234.567,89"))  
+        self.assertEqual(123456789, t("R$ 1.234.567,89"))
+        
+    def test_brdate(self):
+        t=transform.brdate
+        date=datetime.datetime(1982,9,2)
+        self.assertEqual(date, t("02/09/1982"))
+        date=datetime.datetime(1999,12,28)
+        self.assertEqual(date, t("28/12/1999"))  

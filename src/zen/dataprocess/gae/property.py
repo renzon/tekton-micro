@@ -23,11 +23,13 @@ class BaseIntegerProperty(ndb.IntegerProperty):
   
     def validation(self,value):
         raise NotImplemented("Must be implemented")
+    
     def _validate(self, value):
         error=self.validation(value)
         if error:
             raise BadValueError((error+' :%s') % str(value))
         return self.transformation(value)
+    
 
 class CEPProperty(BaseStringProperty):
     def validation(self, value):
@@ -57,11 +59,17 @@ class BrCurrencyProperty(BaseIntegerProperty):
 class Password(object):
     def __init__(self,hs=None, pw=None,pepper=None):
         if hs is None and  pw is None:
-            raise BadValueError("hs and pw can not be none at same time")
-        if hs:
+            self.hs=None
+        elif hs:
             self.hs=hs
         else:
             self.hs=security.generate_password_hash(pw,pepper=pepper)
+            
+    def __eq__(self,y):
+        return self.hs==y.hs
+            
+    def __hash__(self, *args, **kwargs):
+        return hash(self.hs)
 
     
     def check(self, pw,pepper=None):
