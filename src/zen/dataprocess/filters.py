@@ -79,12 +79,23 @@ utc = _UTC()
 
 def brdate(dt,strf="%d/%m/%y - %H:%M:%S"):
     if dt:
-        if not isinstance(dt, datetime.datetime):
-            dt=datetime.datetime(dt.year,dt.month,dt.day)
-        ut = dt.replace(tzinfo=utc)
-        dt = ut.astimezone(brtzinfo)
-        return dt.strftime(strf)
-        return ""
+        if isinstance(dt, datetime.datetime) or isinstance(dt, datetime.date):
+            if not isinstance(dt, datetime.datetime):
+                dt=datetime.datetime(dt.year,dt.month,dt.day)
+            ut = dt.replace(tzinfo=utc)
+            dt = ut.astimezone(brtzinfo)
+            return dt.strftime(strf)
+        return dt
+    return ""
+
+def brdate_no_locale(dt,strf="%d/%m/%y - %H:%M:%S"):
+    if dt:
+        if isinstance(dt, datetime.datetime) or isinstance(dt, datetime.date):
+            if not isinstance(dt, datetime.datetime):
+                dt=datetime.datetime(dt.year,dt.month,dt.day)
+            return dt.strftime(strf)
+        return dt
+    return ""
   
 def cep(c):
     if (c is not None) and len(c) > 5:
