@@ -9,8 +9,8 @@ import br
 from br.handler.oneTest import ARequestHandlerStub
 from br.handler import oneTest
 from br import handler
-from home.handler import home
 from ex import handler as ex_handler
+import home
 from zen.ce import cengine
 
 
@@ -39,11 +39,11 @@ class PathToHandlerTestCase(unittest.TestCase):
         self.assertEquals(result[2],["param1","param2"])
         
         result=cengine.to_handler("/")
-        self.assertEquals(result[0],home)
+        self.assertEquals(result[0], home)
         self.assertEquals(result[1],"index")
         
         result=cengine.to_handler("/1")
-        self.assertEquals(result[0],home)
+        self.assertEquals(result[0], home)
         self.assertEquals(result[1],"index")
         self.assertEquals(result[2],["1"])
         

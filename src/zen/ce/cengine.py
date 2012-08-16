@@ -151,5 +151,3 @@ def to_path(handler,*args):
             return remove_home_index(extract_full_module(handler.__class__))+params
     raise URLNotFound("webapp-ce did not foud a URL for handler: " + handler)
 
-def extract_full_module(klass):
-    return "/" + (klass.__module__ + "/" + klass.__name__).replace(".", "/")
