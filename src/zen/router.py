@@ -17,24 +17,34 @@ def _to_abs_package(package_slices):
     return package_base
 
 
-def _in_range(param_num,spec):
+def _in_range(param_num,spec,**kwargs):
     args=spec[0]
     max_args=len(args)-1 if args else 0
     defaults=spec[3]
     defaults_num=len(defaults) if defaults else 0
     min_args=max_args-defaults_num
+    kwargs_num=len(kwargs)
+    all_args_num=param_num+kwargs_num
 
-    if min_args<=param_num<=max_args: return True
+    if min_args<=all_args_num<=max_args: return True
 
     varargs=spec[1]
-    return varargs
+    method_kwargs=spec[2]
+
+    if varargs and method_kwargs: return True
+
+    if varargs and not kwargs and param_num>=min_args:
+        return True
+
+    if method_kwargs and param_num>=(min_args-kwargs_num):
+        return True
 
 
 
 
 
 
-def _import_helper(package,module_name,class_name, method_name,params):
+def _import_helper(package,module_name,class_name, method_name,params,**kwargs):
     try:
         full_module=package+"."+module_name
         module = importlib.import_module(full_module)
@@ -43,10 +53,9 @@ def _import_helper(package,module_name,class_name, method_name,params):
             if inspect.isclass(clazz) and hasattr(clazz, method_name):
                 instance = clazz()
                 method=getattr(instance, method_name)
-                if _in_range(len(params),inspect.getargspec(method)):
+                if _in_range(len(params),inspect.getargspec(method),**kwargs):
                     return instance,method,params
-    except Exception,e:
-        print e
+    except ImportError: pass
 
 
 def _build_pack_and_slices(package, slices):
@@ -56,28 +65,28 @@ def _build_pack_and_slices(package, slices):
     return package,path_slices
 
 
-def _search_full_path(package, path_slices,defaults=[],params=[]):
+def _search_full_path(package, path_slices,defaults=[],params=[],**kwargs):
     slices=path_slices+defaults
     if len(slices)<3: return
     pack,slices=_build_pack_and_slices(package,slices)
-    result=_import_helper(pack,*slices,params=params)
+    result=_import_helper(pack,*slices,params=params,**kwargs)
     if result or not path_slices: return result
 
     params.insert(0,path_slices.pop())
-    return _search_full_path(package,path_slices,defaults,params)
+    return _search_full_path(package,path_slices,defaults,params,**kwargs)
 
 
-def _maybe_import(package, path_slices):
-    result=_search_full_path(package,path_slices[:],[],[])
+def _maybe_import(package, path_slices,**kwargs):
+    result=_search_full_path(package,path_slices[:],[],[],**kwargs)
     if result: return result
 
-    result=_search_full_path(package,path_slices[:],[index_base],[])
+    result=_search_full_path(package,path_slices[:],[index_base],[],**kwargs)
     if result: return result
 
-    result=_search_full_path(package,path_slices[:],[home_base,index_base],[])
+    result=_search_full_path(package,path_slices[:],[home_base,index_base],[],**kwargs)
     if result: return result
 
-    result=_search_full_path(package,path_slices[:],[home_base,home_base,index_base],[])
+    result=_search_full_path(package,path_slices[:],[home_base,home_base,index_base],[],**kwargs)
     if result: return result
 
     raise PathNotFound()
@@ -87,11 +96,11 @@ def _maybe_import(package, path_slices):
 
 
 
-def to_handler(path):
+def to_handler(path,**kwargs):
     decoded_path = urllib.unquote(path)
     path_slices = filter(lambda d: d != "", decoded_path.split("/"))
 #    Try importing package.handler.method
-    return _maybe_import(package_base,path_slices)
+    return _maybe_import(package_base,path_slices,**kwargs)
 
 
 def _build_params(*params):

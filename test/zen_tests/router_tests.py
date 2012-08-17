@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from unittest.case import TestCase
 from plugins import web
-from plugins.web import home, somehandler,pack
+from plugins.web import home,pack, somehandler
 from plugins.web.pack import home as pack_home, anotherhandler, deep
 from plugins.web.pack.deep import home as deep_home, deephandler, deeper
 from plugins.web.pack.deep.deeper import home as deeper_home, deeperhandler
@@ -101,6 +101,11 @@ class ToHandlerTests(TestCase):
         self.assertEqual("method",method.__name__)
         self.assertListEqual(["1","çao@& "],params)
 
+        handler,method,params=router.to_handler("/somehandler/clazz/method/1",param2=2)
+        self.assertEqual(somehandler.clazz,handler.__class__)
+        self.assertEqual("method",method.__name__)
+        self.assertListEqual(["1"],params)
+
     def test_complete_path_with_defaults(self):
         handler,method,params=router.to_handler("/pack/anotherhandler/clazz/method")
         self.assertEqual(anotherhandler.clazz,handler.__class__)
@@ -116,6 +121,16 @@ class ToHandlerTests(TestCase):
         self.assertEqual(anotherhandler.clazz,handler.__class__)
         self.assertEqual("method",method.__name__)
         self.assertListEqual(["1","2"],params)
+
+        handler,method,params=router.to_handler("/pack/anotherhandler/clazz/method",param1="1",param2="2")
+        self.assertEqual(anotherhandler.clazz,handler.__class__)
+        self.assertEqual("method",method.__name__)
+        self.assertListEqual([],params)
+
+        handler,method,params=router.to_handler("/pack/anotherhandler/clazz/method/1",param2="2")
+        self.assertEqual(anotherhandler.clazz,handler.__class__)
+        self.assertEqual("method",method.__name__)
+        self.assertListEqual(["1"],params)
 
 
 
@@ -135,8 +150,8 @@ class ToHandlerTests(TestCase):
         self.assertEqual("method",method.__name__)
         self.assertListEqual(["1","2","3"],params)
 
-    def test_complete_path_with_kwargs(self):
-        handler,method,params=router.to_handler("/pack/deep/deeper/deeperhandler/clazz/method/1")
+    def test_complete_path_with_varargs_and_kwargs(self):
+        handler,method,params=router.to_handler("/pack/deep/deeper/deeperhandler/clazz/method/1",blah=2)
         self.assertEqual(deeperhandler.clazz,handler.__class__)
         self.assertEqual("method",method.__name__)
         self.assertListEqual(["1"],params)

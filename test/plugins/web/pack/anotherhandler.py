@@ -1,6 +1,6 @@
 
 class clazz:
-    def method(self,a=1,b=2):
+    def method(self,param1=1,param2=2):
         pass
 
     def index(self): pass
