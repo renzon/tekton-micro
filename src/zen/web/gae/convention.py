@@ -10,8 +10,8 @@ Created on 02/02/2011
 
 import webapp2
 
-def _get(self,param,default_value=""):
-    values=self.request.get_all(param)
+def _get(handler,param,default_value=""):
+    values=handler.request.get_all(param)
     if not values: return default_value
     if len(values)==1: return values[0]
     return values
@@ -30,9 +30,10 @@ class Handler(webapp2.RequestHandler):
         self.make_convention()
 
     def make_convention(self):
-        instance_handler, method, args = router.to_handler(self.request.path)
+        kwargs={a:_get(self,a) for a in self.request.arguments()}
+        print kwargs
+        instance_handler, method, args = router.to_handler(self.request.path,**kwargs)
         instance_handler.handler=self
-        kwargs={a:_get(a) for a in self.request.arguments()}
         method(*args,**kwargs)
 
 
