@@ -22,15 +22,11 @@ class ZenHandler(object):
         if len(values)==1: return values[0]
         return values
 
+    def redirect(self,uri):
+        return self.handler.redirect(uri)
 
     def write(self,content):
         return self.response.write(content)
-
-    def render(self,tmpl_name,values={}):
-        return self.tmpl.render(tmpl_name,values)
-
-    def write_tmpl(self,tmpl_name,values={}):
-        return self.write(self.render(tmpl_name,values))
 
 
 

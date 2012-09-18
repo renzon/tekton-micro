@@ -31,7 +31,6 @@ class Handler(webapp2.RequestHandler):
 
     def make_convention(self):
         kwargs={a:_get(self,a) for a in self.request.arguments()}
-        print kwargs
         instance_handler, method, args = router.to_handler(self.request.path,**kwargs)
         instance_handler.handler=self
         method(*args,**kwargs)
