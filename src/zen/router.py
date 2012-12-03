@@ -127,12 +127,8 @@ def to_path(handler,*params):
 
     if inspect.ismodule(handler):
         name=handler.__name__
-    elif inspect.isclass(handler):
-        name=_extract_full_module(handler)
-    elif inspect.ismethod(handler):
-        name=_extract_full_module(handler.im_class)+"/"+handler.__name__
     else:
-        name=_extract_full_module(handler.__class__)
+        name=handler.__module__+"/"+handler.__name__
     name=name.replace(package_base,"",1)
     if not name: return params or "/"
     return name.replace(".","/")+params

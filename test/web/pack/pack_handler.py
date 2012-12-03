@@ -12,5 +12,5 @@ def with_defaults(param1=1,param2=2):
 def with_vargs(param1,*args):
     pass
 
-def with_kwargs(param1,**kwargs):
+def with_kwargs(param1,*args,**kwargs):
     pass

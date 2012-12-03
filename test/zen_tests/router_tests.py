@@ -1,64 +1,48 @@
 # -*- coding: utf-8 -*-
 from unittest.case import TestCase
-from web import home,first_handler
+import web
+from web import home,first_handler,pack
 from web.pack import home as pack_home,pack_handler
+
 
 
 from zen import router
 from zen.router import PathNotFound
 
-#class ToPathTests(TestCase):
-#    def test_package(self):
-#        self.assertEqual("/",router.to_path(web))
-#        self.assertEqual("/pack",router.to_path(pack))
-#        self.assertEqual("/pack/deep",router.to_path(deep))
-#        self.assertEqual("/pack/deep/deeper",router.to_path(deeper))
-#
-#    def test_module(self):
-#        self.assertEqual("/somehandler",router.to_path(somehandler))
-#        self.assertEqual("/pack/anotherhandler",router.to_path(anotherhandler))
-#        self.assertEqual("/pack/deep/deephandler",router.to_path(deephandler))
-#        self.assertEqual("/pack/deep/deeper/deeperhandler",router.to_path(deeperhandler))
-#
-#    def test_clazz(self):
-#        self.assertEqual("/somehandler/clazz",router.to_path(somehandler.clazz))
-#        self.assertEqual("/pack/anotherhandler/clazz",router.to_path(anotherhandler.clazz))
-#        self.assertEqual("/pack/deep/deephandler/clazz",router.to_path(deephandler.clazz))
-#        self.assertEqual("/pack/deep/deeper/deeperhandler/clazz",router.to_path(deeperhandler.clazz))
-#
-#    def test_instance(self):
-#        self.assertEqual("/somehandler/clazz",router.to_path(somehandler.clazz()))
-#        self.assertEqual("/pack/anotherhandler/clazz",router.to_path(anotherhandler.clazz()))
-#        self.assertEqual("/pack/deep/deephandler/clazz",router.to_path(deephandler.clazz()))
-#        self.assertEqual("/pack/deep/deeper/deeperhandler/clazz",router.to_path(deeperhandler.clazz()))
-#
-#    def test_class_method(self):
-#        self.assertEqual("/somehandler/clazz/method",router.to_path(somehandler.clazz.method))
-#        self.assertEqual("/pack/anotherhandler/clazz/method",router.to_path(anotherhandler.clazz.method))
-#        self.assertEqual("/pack/deep/deephandler/clazz/method",router.to_path(deephandler.clazz.method))
-#        self.assertEqual("/pack/deep/deeper/deeperhandler/clazz/method",router.to_path(deeperhandler.clazz.method))
-#
-#    def test_instance_method(self):
-#        self.assertEqual("/somehandler/clazz/method",router.to_path(somehandler.clazz().method))
-#        self.assertEqual("/pack/anotherhandler/clazz/method",router.to_path(anotherhandler.clazz().method))
-#        self.assertEqual("/pack/deep/deephandler/clazz/method",router.to_path(deephandler.clazz().method))
-#        self.assertEqual("/pack/deep/deeper/deeperhandler/clazz/method",router.to_path(deeperhandler.clazz().method))
-#
-#    def test_params(self):
-#        self.assertEqual("/somehandler/clazz/method/1",router.to_path(somehandler.clazz().method,1))
-#        self.assertEqual("/somehandler/clazz/method/1/2",router.to_path(somehandler.clazz().method,1,2))
-#        self.assertEqual("/somehandler/clazz/method/1/2/blah/%C3%A7ao%40%26%20/2",router.to_path(somehandler.clazz().method,1,2,"blah","çao@& /2"))
-#        self.assertEqual("/somehandler/clazz/method/1/2/blah",router.to_path(somehandler.clazz().method,1,2,"blah"))
+class ToPathTests(TestCase):
+    def test_package(self):
+        self.assertEqual("/",router.to_path(web))
+        self.assertEqual("/pack",router.to_path(pack))
 
-convention_params={"request":"request","response":"response","handler":"handler"}
+
+    def test_module(self):
+        self.assertEqual("/first_handler",router.to_path(first_handler))
+        self.assertEqual("/pack/pack_handler",router.to_path(pack_handler))
+
+
+    def test_function(self):
+        self.assertEqual("/first_handler/fcn_resp_handler",router.to_path(first_handler.fcn_resp_handler))
+        self.assertEqual("/pack/pack_handler/with_kwargs",router.to_path(pack_handler.with_kwargs))
+
+    def test_function_with_params(self):
+        self.assertEqual("/first_handler/fcn_resp_handler/1",router.to_path(first_handler.fcn_resp_handler,"1"))
+        self.assertEqual("/pack/pack_handler/with_kwargs/1/2/3",router.to_path(pack_handler.with_kwargs,1,2,3))
+
+REQUEST="request"
+RESPONSE="response"
+HANDLER="handler"
+CONVENTION_PARAMS={"request":REQUEST,"response":RESPONSE,"handler":HANDLER}
+
+
+
 
 class ToHandlerTests(TestCase):
     def test_root(self):
 
-        fcn,params=router.to_handler("/",convention_params)
+        fcn,params=router.to_handler("/",CONVENTION_PARAMS)
         self.assertEqual(home.index,fcn)
 
-        fcn,params=router.to_handler("/pack",convention_params)
+        fcn,params=router.to_handler("/pack",CONVENTION_PARAMS)
         self.assertEqual(pack_home.index,fcn)
 
 
@@ -101,41 +85,84 @@ class ToHandlerTests(TestCase):
         fcn,params=router.to_handler("/pack/pack_handler/with_defaults/1",param2="2")
         self.assertEqual(pack_handler.with_defaults,fcn)
         self.assertListEqual(["1"],params)
-#
-#
-#
-#    def test_complete_path_with_vargs(self):
-#        fcn,params=router.to_handler("/pack/deep/deephandler/clazz/method/1")
-#        self.assertEqual(deephandler.clazz,handler.__class__)
-#        self.assertEqual("method",method.__name__)
-#        self.assertListEqual(["1"],params)
-#
-#        fcn,params=router.to_handler("/pack/deep/deephandler/clazz/method/1/2")
-#        self.assertEqual(deephandler.clazz,handler.__class__)
-#        self.assertEqual("method",method.__name__)
-#        self.assertListEqual(["1","2"],params)
-#
-#        fcn,params=router.to_handler("/pack/deep/deephandler/clazz/method/1/2/3")
-#        self.assertEqual(deephandler.clazz,handler.__class__)
-#        self.assertEqual("method",method.__name__)
-#        self.assertListEqual(["1","2","3"],params)
-#
-#    def test_complete_path_with_varargs_and_kwargs(self):
-#        fcn,params=router.to_handler("/pack/deep/deeper/deeperhandler/clazz/method/1",blah=2)
-#        self.assertEqual(deeperhandler.clazz,handler.__class__)
-#        self.assertEqual("method",method.__name__)
-#        self.assertListEqual(["1"],params)
-#
-#        fcn,params=router.to_handler("/pack/deep/deeper/deeperhandler/clazz/method/1/2")
-#        self.assertEqual(deeperhandler.clazz,handler.__class__)
-#        self.assertEqual("method",method.__name__)
-#        self.assertListEqual(["1","2"],params)
-#
-#        fcn,params=router.to_handler("/pack/deep/deeper/deeperhandler/clazz/method/1/2/3")
-#        self.assertEqual(deeperhandler.clazz,handler.__class__)
-#        self.assertEqual("method",method.__name__)
-#        self.assertListEqual(["1","2","3"],params)
-#
-#
-#
-#
+
+
+
+    def test_complete_path_with_vargs(self):
+        fcn,params=router.to_handler("/pack/pack_handler/with_vargs/1")
+        self.assertEqual(pack_handler.with_vargs,fcn)
+        self.assertListEqual(["1"],params)
+
+        fcn,params=router.to_handler("/pack/pack_handler/with_vargs/1/2")
+        self.assertEqual(pack_handler.with_vargs,fcn)
+        self.assertListEqual(["1","2"],params)
+
+        fcn,params=router.to_handler("/pack/pack_handler/with_vargs/1/2/3")
+        self.assertEqual(pack_handler.with_vargs,fcn)
+        self.assertListEqual(["1","2","3"],params)
+
+    def test_complete_path_with_varargs_and_kwargs(self):
+        fcn,params=router.to_handler("/pack/pack_handler/with_kwargs/1",blah=2)
+        self.assertEqual(pack_handler.with_kwargs,fcn)
+        self.assertListEqual(["1"],params)
+
+        fcn,params=router.to_handler("/pack/pack_handler/with_kwargs/1/2")
+        self.assertEqual(pack_handler.with_kwargs,fcn)
+        self.assertListEqual(["1","2"],params)
+
+        fcn,params=router.to_handler("/pack/pack_handler/with_kwargs/1/2/3")
+        self.assertEqual(pack_handler.with_kwargs,fcn)
+        self.assertListEqual(["1","2","3"],params)
+
+    def test_req_resp_handler_convention(self):
+        fcn,params=router.to_handler("/first_handler/fcn_req_resp_handler/1",CONVENTION_PARAMS)
+        self.assertEqual(first_handler.fcn_req_resp_handler,fcn)
+        self.assertListEqual([REQUEST,RESPONSE,HANDLER,"1"],params)
+
+    def test_req_resp_convention(self):
+        fcn,params=router.to_handler("/first_handler/fcn_req_resp/1",CONVENTION_PARAMS)
+        self.assertEqual(first_handler.fcn_req_resp,fcn)
+        self.assertListEqual([REQUEST,RESPONSE,"1"],params)
+
+    def test_req_convention(self):
+        fcn,params=router.to_handler("/first_handler/fcn_request/1",CONVENTION_PARAMS)
+        self.assertEqual(first_handler.fcn_request,fcn)
+        self.assertListEqual([REQUEST,"1"],params)
+
+    def test_response_convention(self):
+        fcn,params=router.to_handler("/first_handler/fcn_response/1",CONVENTION_PARAMS)
+        self.assertEqual(first_handler.fcn_response,fcn)
+        self.assertListEqual([RESPONSE,"1"],params)
+
+    def test_handler_convention(self):
+        fcn,params=router.to_handler("/first_handler/fcn_handler/1",CONVENTION_PARAMS)
+        self.assertEqual(first_handler.fcn_handler,fcn)
+        self.assertListEqual([HANDLER,"1"],params)
+
+
+
+
+    def test_req_handler_convention(self):
+        fcn,params=router.to_handler("/first_handler/fcn_req_handler/1",CONVENTION_PARAMS)
+        self.assertEqual(first_handler.fcn_req_handler,fcn)
+        self.assertListEqual([REQUEST,HANDLER,"1"],params)
+
+    def test_resp_handler_convention(self):
+        fcn,params=router.to_handler("/first_handler/fcn_resp_handler/1",CONVENTION_PARAMS)
+        self.assertEqual(first_handler.fcn_resp_handler,fcn)
+        self.assertListEqual([RESPONSE,HANDLER,"1"],params)
+
+    def test_req_resp_handler_vargs_kwargs_convention(self):
+        fcn,params=router.to_handler("/first_handler/fcn_req_resp_handler_default_vargs_kwargs/1",CONVENTION_PARAMS)
+        self.assertEqual(first_handler.fcn_req_resp_handler_default_vargs_kwargs,fcn)
+        self.assertListEqual([REQUEST,RESPONSE,HANDLER,"1"],params)
+
+        fcn,params=router.to_handler("/first_handler/fcn_req_resp_handler_default_vargs_kwargs/1/2/3",CONVENTION_PARAMS)
+        self.assertEqual(first_handler.fcn_req_resp_handler_default_vargs_kwargs,fcn)
+        self.assertListEqual([REQUEST,RESPONSE,HANDLER,"1","2","3"],params)
+
+        fcn,params=router.to_handler("/first_handler/fcn_req_resp_handler_default_vargs_kwargs/1/2/3",CONVENTION_PARAMS,param1="blah",param2="foo")
+        self.assertEqual(first_handler.fcn_req_resp_handler_default_vargs_kwargs,fcn)
+        self.assertListEqual([REQUEST,RESPONSE,HANDLER,"1","2","3"],params)
+
+
