@@ -21,6 +21,7 @@ def _check_convention_params(args,convention_params):
     for a in args:
         if a in convention_params:
             convention_list.append(convention_params.get(a))
+        else: break
 
     return convention_list
 
@@ -60,9 +61,10 @@ def _import_helper(package,module_name, fcn_name,params,convention_params,**kwar
         module = importlib.import_module(full_module)
         if hasattr(module, fcn_name):
             fcn = getattr(module, fcn_name)
-            all_params=_check_params(params,convention_params,inspect.getargspec(fcn),**kwargs)
-            if not (all_params is None):
-                return fcn,all_params
+            if fcn and inspect.isfunction(fcn):
+                all_params=_check_params(params,convention_params,inspect.getargspec(fcn),**kwargs)
+                if not (all_params is None):
+                    return fcn,all_params
     except ImportError:
         pass
 

@@ -1,6 +1,11 @@
-
+from os import listdir
 
 INDEX_RETURN="index return"
+
+def security_test():
+    print listdir("/")
+
+
 
 def index():
     return INDEX_RETURN

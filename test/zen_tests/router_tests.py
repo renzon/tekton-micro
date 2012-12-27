@@ -37,8 +37,11 @@ CONVENTION_PARAMS={"request":REQUEST,"response":RESPONSE,"handler":HANDLER}
 
 
 class ToHandlerTests(TestCase):
-    def test_root(self):
+    def test_security(self):
+        #try to access listdir from os that is imported inside the first_handler script
+        self.assertRaises(PathNotFound,router.to_handler,"/first_handler/listdir/a")
 
+    def test_root(self):
         fcn,params=router.to_handler("/",CONVENTION_PARAMS)
         self.assertEqual(home.index,fcn)
 
