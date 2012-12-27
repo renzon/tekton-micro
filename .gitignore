@@ -1,0 +1,9 @@
+*.py[co]
+.idea
+*~
+*.swp
+.project
+.pydevproject
+.settings/
+dev.appstore
+.DS_STORE
