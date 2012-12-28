@@ -103,7 +103,7 @@ formBase='''
 
 class Form():
     ''' Base class used to validate,
-     transform and generate html based on model properties
+     transform and generate html based on model _processors
     '''
     def __init__(self,modelClass,exclude=(),requestValidator=None):
         props=modelClass._properties
@@ -131,11 +131,11 @@ class Form():
         return allErrors
     
     def transform(self,request):
-        "Returns a transformed properties dict"
+        "Returns a transformed _processors dict"
         return {k:t(request.get(k)) for k,t in self.transformations.iteritems()}
     
     def fill(self,request,model_instace):
-        ''' fill a model instance with transformed request properties
+        ''' fill a model instance with transformed request _processors
         '''
         def f(m,key):
             val=self.transformations[key](request.get(key))
@@ -159,6 +159,6 @@ class Form():
 
     
     def request_dict(self, request):
-        ''' Return a dict containing the properties defined on form
+        ''' Return a dict containing the _processors defined on form
         '''
         return {k:request.get(k) for k in self.transformations.keys()}
