@@ -147,9 +147,13 @@ def _generate_default(property,cls):
     return None
 
 
+def assignable(name,property):
+    return name!="class" and not isinstance(property,ndb.ComputedProperty)
+
+
 def make_one(cls,**kwargs):
     properties=cls._properties
     generated_kwargs={k:_generate_default(v,cls) for k,v in properties.iteritems()
-                    if not k.startswith("_") and not k in kwargs}
+                    if assignable(k,v) and not k in kwargs}
     generated_kwargs.update(kwargs)
     return cls(**generated_kwargs)

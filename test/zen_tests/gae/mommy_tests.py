@@ -1,6 +1,7 @@
 from unittest import TestCase
 import datetime
 from google.appengine.ext import ndb
+from google.appengine.ext.ndb.polymodel import PolyModel
 from zen.gae import mommy
 
 NOW=datetime.datetime.now()
@@ -10,6 +11,12 @@ mommy._now_fnc=lambda : NOW
 
 INTEGER_DEFAULT=3676
 INTEGER_CHOICES=[3,2,1]
+
+class StubPolymodel(PolyModel):
+    a=ndb.IntegerProperty()
+
+class ChildStub(StubPolymodel):
+    b=ndb.StringProperty()
 
 class StubRelation(ndb.Model):
     ppt=ndb.IntegerProperty()
@@ -25,6 +32,7 @@ class Stub(ndb.Model):
     integer_repeated=ndb.IntegerProperty(repeated=True)
     integer_choice=ndb.IntegerProperty(choices=INTEGER_CHOICES)
     integer_default=ndb.IntegerProperty(default=INTEGER_DEFAULT)
+    computed=ndb.ComputedProperty(lambda self: self.integer+1)
     float=ndb.FloatProperty()
     string=ndb.StringProperty()
     dtime=ndb.DateTimeProperty()
@@ -44,6 +52,11 @@ class Stub(ndb.Model):
 
 
 class MommyTests(TestCase):
+    def test_polymodel(self):
+        child=mommy.make_one(ChildStub)
+        self.assertEqual(1,child.a)
+        self.assertEqual("default",child.b)
+
     def test_integer_repeated(self):
         #default
         stub=mommy.make_one(Stub)
