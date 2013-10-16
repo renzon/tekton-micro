@@ -1,4 +1,4 @@
-zenwarch
+ZenWArch
 ========
 
 Zen Web Architecture - A engine to routing by convention
