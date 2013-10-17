@@ -24,9 +24,6 @@ libraries:
   version: "0.6c11"
 
 handlers:
-- url: /^(\_).*
-  script: convention.app
-
 - url: /
   script: convention.app
 
@@ -37,4 +34,6 @@ handlers:
 - url: /_ah/warmup
   script: warmup.app
 
+- url: /.*
+  script: convention.app
 
