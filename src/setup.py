@@ -108,7 +108,7 @@ NAME = "zenwarch"
 DESCRIPTION = "Route your web-app by convention over configuration"
 AUTHOR = "Renzo Nuccitelli"
 AUTHOR_EMAIL = "renzo.n@gmail.com"
-URL = "https://bitbucket.org/renzon/zenwarch"
+URL = "https://github.com/renzon/zenwarch/"
 VERSION = __import__(PACKAGE).__version__
 
 
