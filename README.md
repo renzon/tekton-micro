@@ -30,3 +30,9 @@ dev_appserver.py . --port=8088
 This command will start the local server on localhost:8088
 
 The framework documentation is on github wiki: https://github.com/renzon/zenwarch/wiki
+
+For installing it from pypi, use:
+
+```
+pip install zenwarch
+```
