@@ -24,7 +24,7 @@ libraries:
   version: "0.6c11"
 
 handlers:
-- url: /[^_].*
+- url: /^(\_).*
   script: convention.app
 
 - url: /
