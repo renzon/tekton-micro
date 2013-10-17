@@ -9,7 +9,11 @@ You can use it as a template for your app. It is running on http://zenwarchi.app
 
 Copy this folder, rename it to your project name
 
-navigate to src/venv and run ./venv.sh
+navigate to roject_template/src/venv and run 
+
+```
+./venv.sh
+```
 
 It will build a virtualven on the venv folder and create a symlink on src, so Google App Engine can see the your libraries
 
