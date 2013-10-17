@@ -7,3 +7,10 @@
 .settings/
 dev.appstore
 .DS_STORE
+
+project_template/venv/bin
+project_template/venv/include
+project_template/venv/lib
+project_template/venv/local
+project_template/venv/.pip_download_cache
+project_template/src/lib
