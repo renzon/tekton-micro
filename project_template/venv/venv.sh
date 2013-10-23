@@ -9,7 +9,14 @@ function to_console {
 
 to_console "Setting up virtualenv on venv"
 
-source bin/activate || (cd .. && virtualenv -p /usr/bin/python2.7 venv && cd venv && source bin/activate)
+
+cd ..
+to_console "creating virtual env on venv folder"
+virtualenv -p /usr/bin/python2.7 venv
+cd venv
+to_console "Activating virtualenv"
+source bin/activate
+
 
 to_console "Checking up dependencies"
 
@@ -22,6 +29,7 @@ if [ ! -d lib ]; then
     to_console "Creating symlink on src/lib so installed libs become visible to Google App Engine"
     ln -s ../venv/lib/python2.7/site-packages lib
 fi
+
 
 
 
