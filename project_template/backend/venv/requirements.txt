@@ -1,1 +1,1 @@
-zenwarch==2.1
+zenwarch==2.1.1
