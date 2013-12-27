@@ -9,7 +9,6 @@ from google.appengine.api import app_identity, mail, capabilities
 from google.appengine.runtime import DeadlineExceededError
 
 from zen.router import PathNotFound
-import settings
 
 
 def get_apis_statuses(e):
@@ -25,13 +24,14 @@ def get_apis_statuses(e):
         'memcache': capabilities.CapabilitySet('memcache').is_enabled(),
         'taskqueue': capabilities.CapabilitySet('taskqueue').is_enabled(),
         'urlfetch': capabilities.CapabilitySet('urlfetch').is_enabled(),
-    }
+        }
     t2 = time.time()
     statuses['time'] = t2 - t1
     return statuses
 
 
 def send_error_to_admins(exception, handler, write_tmpl):
+    import settings # workaround. See https://github.com/renzon/zenwarch/issues/3
     tb = traceback.format_exc()
     errmsg = exception.message
 
