@@ -31,7 +31,7 @@ def get_apis_statuses(e):
 
 
 def send_error_to_admins(exception, handler, write_tmpl):
-    import settings # workaround. See https://github.com/renzon/zenwarch/issues/3
+    import settings  # workaround. See https://github.com/renzon/zenwarch/issues/3
     tb = traceback.format_exc()
     errmsg = exception.message
 

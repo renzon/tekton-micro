@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
-from web_test import my_form
+from web import my_form
 from zen import router
 
 

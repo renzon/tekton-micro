@@ -20,7 +20,7 @@ source bin/activate
 
 to_console "Checking up dependencies"
 
-pip install -r dev_requirements.txt --upgrade --use-mirrors
+pip install -r dev_requirements.txt --upgrade
 
 
 cd ../src
