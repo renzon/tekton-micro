@@ -28,6 +28,12 @@ class ToPathTests(TestCase):
         self.assertEqual("/first_handler/fcn_resp_handler/1", router.to_path(first_handler.fcn_resp_handler, "1"))
         self.assertEqual("/pack/pack_handler/with_kwargs/1/2/3", router.to_path(pack_handler.with_kwargs, 1, 2, 3))
 
+    def test_home_index(self):
+        self.assertEqual("/first_handler/1", router.to_path(first_handler.index, "1"))
+        self.assertEqual("/pack/1/2/3", router.to_path(pack_home.index, 1, 2, 3))
+        self.assertEqual("/1/2/3", router.to_path(home.index, 1, 2, 3))
+        self.assertEqual("/", router.to_path(home.index))
+
 
 REQUEST = "request"
 RESPONSE = "response"

@@ -129,7 +129,16 @@ def to_path(handler, *params):
         name = handler.__name__
     else:
         name = handler.__module__ + "/" + handler.__name__
+
     name = name.replace(package_base, "", 1)
+
+    def remove_from_end(path, suffix):
+        return path[:-len(suffix)-1] if path.endswith(suffix) else path
+
+    home_index = '/'.join((home_base, index_base))
+    name=remove_from_end(name,home_index)
+    name=remove_from_end(name,index_base)
+
     if not name: return params or "/"
     return name.replace(".", "/") + params
 
