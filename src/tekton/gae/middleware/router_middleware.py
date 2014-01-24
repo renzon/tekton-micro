@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
-from zen import router
+from tekton import router
 
 
 def execute(next_process, handler, dependencies, **kwargs):

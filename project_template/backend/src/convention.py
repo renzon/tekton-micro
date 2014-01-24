@@ -5,7 +5,7 @@ import os
 sys.path.append(os.path.join(os.path.dirname(__file__), "lib"))
 
 import settings
-from zen.gae import middleware
+from tekton.gae import middleware
 import webapp2
 
 

@@ -103,12 +103,12 @@ def find_package_data(
     return out
 
 
-PACKAGE = "zen"
-NAME = "zenwarch"
+PACKAGE = "tekton"
+NAME = "tekton"
 DESCRIPTION = "Route your web-app by convention over configuration"
 AUTHOR = "Renzo Nuccitelli"
 AUTHOR_EMAIL = "renzo.n@gmail.com"
-URL = "https://github.com/renzon/zenwarch/"
+URL = "https://github.com/renzon/tekton/"
 VERSION = __import__(PACKAGE).__version__
 
 

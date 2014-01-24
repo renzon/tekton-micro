@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
 import tmpl_middleware
-from zen.gae.middleware import router_middleware, parameter, webapp2_dependencies, email_errors
+from tekton.gae.middleware import router_middleware, parameter, webapp2_dependencies, email_errors
 
 SENDER_EMAIL = 'renzon@gmail.com'
 WEB_BASE_PACKAGE = "web"

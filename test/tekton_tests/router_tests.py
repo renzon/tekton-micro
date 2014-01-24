@@ -3,8 +3,8 @@ from unittest.case import TestCase
 import web_test
 from web_test import home, first_handler, pack
 from web_test.pack import home as pack_home, pack_handler
-from zen import router
-from zen.router import PathNotFound
+from tekton import router
+from tekton.router import PathNotFound
 
 router.package_base='web_test'
 

@@ -2,8 +2,8 @@
 from __future__ import absolute_import, unicode_literals
 import unittest
 from mock import Mock
-from zen.gae import middleware
-from zen.gae.middleware import router_middleware
+from tekton.gae import middleware
+from tekton.gae.middleware import router_middleware
 
 
 class MiddlewareTests(unittest.TestCase):
