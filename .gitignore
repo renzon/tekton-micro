@@ -43,9 +43,9 @@ src/locale
 dev.appstore
 .DS_STORE
 src/dist
-project_template/venv/bin
-project_template/venv/include
-project_template/venv/lib
-project_template/venv/local
-project_template/venv/.pip_download_cache
-project_template/src/lib
+project_template/backend/venv/bin
+project_template/backend/venv/include
+project_template/backend/venv/lib
+project_template/backend/venv/local
+project_template/backend/venv/.pip_download_cache
+project_template/backend/src/lib
