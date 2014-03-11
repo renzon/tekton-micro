@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
 import unittest
+
 from mock import Mock
-from tekton import json_middleware
+from tekton.gae.middleware import json_middleware
 
 
 class MiddlewareTests(unittest.TestCase):
