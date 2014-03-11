@@ -7,7 +7,7 @@ def execute(next_process, handler, dependencies, **kwargs):
     def _json(dct, prefix=")]}',\n"):
         js = prefix + json.dumps(dct)
         resp = handler.response
-        resp.headers['Content-Type'] = 'application/json'
+        resp.headers[str('Content-Type')] = str('application/json')
         return resp.write(js)
 
     dependencies["_json"] = _json
