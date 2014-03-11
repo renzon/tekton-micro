@@ -1,9 +1,12 @@
+Observação: para documentação em português leia o capítulo 3 do livro [App Engine e Python](https://leanpub.com/appengine). Ele se encontra na amostra grátis.
+
 Tekton
 ========
 
+
 Microarchitecture that allow routing by convention
 
-This is the a new name from the older and ugly https://github.com/renzon/zenwarch
+This is a new name for the older https://github.com/renzon/zenwarch
 
 Inside the project source code there is a folder called "project_template"
 
