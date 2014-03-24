@@ -1,4 +1,4 @@
-Observação: para documentação em português leia o capítulo 3 do livro [App Engine e Python](https://leanpub.com/appengine). Ele se encontra na amostra grátis.
+Observação: para documentação em português leia o capítulo 3 do livro [App Engine e Python](https://leanpub.com/appengine/read#tekton).
 
 Tekton
 ========
