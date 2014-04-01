@@ -12,13 +12,21 @@ Inside the project source code there is a folder called "project_template"
 
 You can use it as a template for your app. It is running, as example, on http://zenwarchi.appspot.com
 
-navigate to project_template/src/venv and run 
+Navigate to project_template/src/venv and run:
+
+### On Linux
 
 ```
 ./venv.sh
 ```
 
-It will build a virtualven on the venv folder and create a symlink on src, so Google App Engine can see the your libraries.
+### On Windows (must run as admin on comand line)
+
+```
+./venvwin.bat
+```
+
+It will build a virtualven on the venv folder and create a symlink on src, so Google App Engine can see the your installed libraries.
 
 You can run this command again this anytime you want to add or upgrade a lib on requirements.txt
 
