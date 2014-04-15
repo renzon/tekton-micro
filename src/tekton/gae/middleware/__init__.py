@@ -15,8 +15,6 @@ def execute(midlewares, handler, dependencies=None, **kwargs):
 
 
 class Middleware(object):
-    execute_tear_down_on_error = False
-
     def __init__(self, handler, dependecies, request_args):
         self.dependecies = dependecies
         self.handler = handler
@@ -31,6 +29,9 @@ class Middleware(object):
     def tear_down(self):
         pass
 
+    def handler_error(self):
+        pass
+
 
 def execute_2(middleware_classes, handler):
     '''
@@ -40,14 +41,22 @@ def execute_2(middleware_classes, handler):
     dependecies = {}
     request_args = {}
     executed_middlewares = []
+    exception = None
     for mid_class in middleware_classes:
         mid_obj = mid_class(handler, dependecies, request_args)
         executed_middlewares.append(mid_obj)
-        should_stop_next_middleware = mid_obj.set_up()
-        if should_stop_next_middleware:
+        try:
+            should_stop_next_middleware = mid_obj.set_up()
+            if should_stop_next_middleware:
+                break
+        except Exception, e:
+            exception = e
             break
 
     for mid in reversed(executed_middlewares):
-        mid.tear_down()
+        if exception:
+            mid.handle_error(exception)
+        else:
+            mid.tear_down()
 
 
