@@ -41,6 +41,20 @@ class MiddlewareTests(unittest.TestCase):
         mid_2_class.assert_called_once_with(None, {}, {})
         mid_1.set_up.assert_called_once_with()
         mid_2.set_up.assert_called_once_with()
+        mid_1.tear_down.assert_called_once_with()
+        mid_2.tear_down.assert_called_once_with()
+
+    def test_stop_next_middleware_execute_2(self):
+        mid_1_class, mid_1 = build_middleware(True)
+        mid_2_class, mid_2 = build_middleware()
+
+        middleware.execute_2([mid_1_class, mid_2_class], None)
+        mid_1_class.assert_called_once_with(None, {}, {})
+        self.assertFalse(mid_2_class.called)
+        mid_1.set_up.assert_called_once_with()
+        self.assertFalse(mid_2.set_up.called)
+        mid_1.tear_down.assert_called_once_with()
+        self.assertFalse(mid_2.tear_down.called)
 
 
     def test_router(self):
