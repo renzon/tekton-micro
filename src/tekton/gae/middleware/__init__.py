@@ -15,8 +15,8 @@ def execute(midlewares, handler, dependencies=None, **kwargs):
 
 
 class Middleware(object):
-    def __init__(self, handler, dependecies, request_args):
-        self.dependecies = dependecies
+    def __init__(self, handler, dependencies, request_args):
+        self.dependencies = dependencies
         self.handler = handler
         self.request_args = request_args
 
@@ -29,7 +29,7 @@ class Middleware(object):
     def tear_down(self):
         pass
 
-    def handler_error(self):
+    def handle_error(self,e):
         pass
 
 

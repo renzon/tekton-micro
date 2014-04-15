@@ -17,7 +17,7 @@ class BaseHandler(webapp2.RequestHandler):
         self.make_convetion()
 
     def make_convetion(self):
-        middleware.execute(settings.MIDDLEWARES, self)
+        middleware.execute_2(settings.MIDDLEWARES, self)
 
 
 app = webapp2.WSGIApplication([("/.*", BaseHandler)], debug=False)

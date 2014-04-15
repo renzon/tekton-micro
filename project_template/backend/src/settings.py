@@ -1,14 +1,18 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
-import tmpl_middleware
-from tekton.gae.middleware import router_middleware, parameter, webapp2_dependencies, email_errors, json_middleware
+from tmpl_middleware import TemplateMiddleware
+from tekton.gae.middleware.email_errors import EmailMiddleware
+from tekton.gae.middleware.json_middleware import JsonMiddleare
+from tekton.gae.middleware.parameter import RequestParamsMiddleware
+from tekton.gae.middleware.router_middleware import RouterMiddleware
+from tekton.gae.middleware.webapp2_dependencies import Webapp2Dependencies
 
 SENDER_EMAIL = 'renzon@gmail.com'
 WEB_BASE_PACKAGE = "web"
-MIDDLEWARES = [tmpl_middleware.execute,
-               json_middleware.execute,
-               email_errors.execute,
-               webapp2_dependencies.execute,
-               parameter.execute,
-               router_middleware.execute]
+MIDDLEWARES = [TemplateMiddleware,
+               JsonMiddleare,
+               EmailMiddleware,
+               Webapp2Dependencies,
+               RequestParamsMiddleware,
+               RouterMiddleware]
 

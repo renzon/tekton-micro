@@ -7,6 +7,7 @@ import time
 
 from google.appengine.api import app_identity, mail, capabilities
 from google.appengine.runtime import DeadlineExceededError
+from tekton.gae.middleware import Middleware
 
 from tekton.router import PathNotFound
 
@@ -24,7 +25,7 @@ def get_apis_statuses(e):
         'memcache': capabilities.CapabilitySet('memcache').is_enabled(),
         'taskqueue': capabilities.CapabilitySet('taskqueue').is_enabled(),
         'urlfetch': capabilities.CapabilitySet('urlfetch').is_enabled(),
-        }
+    }
     t2 = time.time()
     statuses['time'] = t2 - t1
     return statuses
@@ -32,6 +33,7 @@ def get_apis_statuses(e):
 
 def send_error_to_admins(exception, handler, write_tmpl):
     import settings  # workaround. See https://github.com/renzon/zenwarch/issues/3
+
     tb = traceback.format_exc()
     errmsg = exception.message
 
@@ -73,3 +75,14 @@ def execute(next_process, handler, dependencies, **kwargs):
     except BaseException, e:
         handler.response.status_code = 400
         send_error_to_admins(e, handler, dependencies['_write_tmpl'])
+
+
+class EmailMiddleware(Middleware):
+    def handle_error(self, exception):
+        if isinstance(exception, PathNotFound):
+            self.handler.response.set_status(404)
+            send_error_to_admins(exception, self.handler, self.dependencies['_write_tmpl'])
+        else:
+            self.handler.response.set_status(400)
+            send_error_to_admins(exception, self.handler, self.dependencies['_write_tmpl'])
+
