@@ -6,6 +6,14 @@ from tekton.gae import middleware
 from tekton.gae.middleware import router_middleware
 
 
+def build_middleware(setup_return=False, execute_tear_down_on_error=False):
+    mid = Mock()
+    mid.set_up = Mock(return_value=setup_return)
+    mid_class = Mock(return_value=mid)
+    mid_class.execute_tear_down_on_error = execute_tear_down_on_error
+    return mid_class, mid
+
+
 class MiddlewareTests(unittest.TestCase):
     def test_execute(self):
         mid_flags = [False, False]
@@ -23,6 +31,16 @@ class MiddlewareTests(unittest.TestCase):
 
         middleware.execute([middleware_1, middleware_2], None)
         self.assertListEqual([True, True], mid_flags)
+
+    def test_successful_execute_2(self):
+        mid_1_class, mid_1 = build_middleware()
+        mid_2_class, mid_2 = build_middleware()
+
+        middleware.execute_2([mid_1_class, mid_2_class], None)
+        mid_1_class.assert_called_once_with(None, {}, {})
+        mid_2_class.assert_called_once_with(None, {}, {})
+        mid_1.set_up.assert_called_once_with()
+        mid_2.set_up.assert_called_once_with()
 
 
     def test_router(self):
