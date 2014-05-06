@@ -60,7 +60,8 @@ class MiddlewareTests(unittest.TestCase):
         mid_2_class, mid_2 = build_middleware()
         mid_3_class, mid_3 = build_middleware()
 
-        def f(): raise Exception()
+        def f():
+            raise Exception()
 
         mid_2.set_up = f
 
