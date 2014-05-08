@@ -50,6 +50,25 @@ CONVENTION_PARAMS = {"request": REQUEST, "response": RESPONSE, "handler": HANDLE
 
 
 class ToHandlerTests(TestCase):
+    def assert_error_msg(self, path, msg):
+        try:
+            router.to_handler(path)
+        except PathNotFound, e:
+            self.assertTrue(e.message.find(msg) != -1, 'error msg should contain ' + msg)
+            return
+
+        self.fail('should raise PathNotFound')
+
+    def test_import_error_msg(self):
+        self.assert_error_msg('/import_error', 'ImportError: No module named not_existing_module')
+
+    def test_syntax_error_msg(self):
+        self.assert_error_msg('/syntax_error', "NameError: name 'foo' is not defined")
+
+    def test_cycle_error_msg(self):
+        self.assert_error_msg("/cycle_error", 'ImportError: cannot import name cycle_error')
+
+
     def test_security(self):
         #try to access listdir from os that is imported inside the first_handler script
         self.assertRaises(PathNotFound, router.to_handler, "/first_handler/listdir/a")
@@ -178,5 +197,6 @@ class ToHandlerTests(TestCase):
                                         CONVENTION_PARAMS, param1="blah", param2="foo")
         self.assertEqual(first_handler.fcn_req_resp_handler_default_vargs_kwargs, fcn)
         self.assertListEqual([REQUEST, RESPONSE, HANDLER, "1", "2", "3"], params)
+
 
 

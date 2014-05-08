@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import importlib
 import inspect
+import traceback
+import os
 import urllib
 
 __author__ = 'renzo'
@@ -56,18 +58,25 @@ def _check_params(params, convention_params, spec, **kwargs):
         return all_params
 
 
-def _import_helper(package, module_name, fcn_name, params, convention_params, **kwargs):
+def _import_helper(base_dir, errors, package, module_name, fcn_name, params, convention_params, **kwargs):
+    full_module = package + "." + module_name
+    module_path = os.path.join(base_dir, *full_module.split('.'))
+    is_file = os.path.isfile(module_path + '.py')
+    if not is_file:
+        return
+    module = None
     try:
-        full_module = package + "." + module_name
         module = importlib.import_module(full_module)
-        if hasattr(module, fcn_name):
-            fcn = getattr(module, fcn_name)
-            if fcn and inspect.isfunction(fcn):
-                all_params = _check_params(params, convention_params, inspect.getargspec(fcn), **kwargs)
-                if not (all_params is None):
-                    return fcn, all_params
-    except ImportError:
-        pass
+    except:
+        tb = traceback.format_exc()
+        errors.append(tb)
+        return
+    if hasattr(module, fcn_name):
+        fcn = getattr(module, fcn_name)
+        if fcn and inspect.isfunction(fcn):
+            all_params = _check_params(params, convention_params, inspect.getargspec(fcn), **kwargs)
+            if all_params is not None:
+                return fcn, all_params
 
 
 def _build_pack_and_slices(package, slices):
@@ -77,36 +86,51 @@ def _build_pack_and_slices(package, slices):
     return package, path_slices
 
 
-def _search_full_path(package, path_slices, defaults=[], params=[], convention_params={}, **kwargs):
+def _search_full_path(base_dir, package, path_slices, defaults=[], params=[], convention_params={}, errors=[],
+                      **kwargs):
     slices = path_slices + defaults
-    if len(slices) < 2: return
+    if len(slices) < 2:
+        return
     pack, slices = _build_pack_and_slices(package, slices)
-    result = _import_helper(pack, *slices, params=params, convention_params=convention_params, **kwargs)
+    result = _import_helper(base_dir, errors, pack, *slices, params=params, convention_params=convention_params,
+                            **kwargs)
     if result or not path_slices:
         return result
 
     params.insert(0, path_slices.pop())
-    return _search_full_path(package, path_slices, defaults, params, convention_params, **kwargs)
+    return _search_full_path(base_dir, package, path_slices, defaults, params, convention_params, errors, **kwargs)
 
 
-def _maybe_import(package, path_slices, convention_params, **kwargs):
-    result = _search_full_path(package, path_slices[:], [], [], convention_params, **kwargs)
-    if result: return result
+def _maybe_import(path, base_dir, package, path_slices, convention_params, errors, **kwargs):
+    result = _search_full_path(base_dir, package, path_slices[:], [], [], convention_params, errors, **kwargs)
+    if result:
+        return result
 
-    result = _search_full_path(package, path_slices[:], [index_base], [], convention_params, **kwargs)
-    if result: return result
+    result = _search_full_path(base_dir, package, path_slices[:], [index_base], [], convention_params, errors,
+                               **kwargs)
+    if result:
+        return result
 
-    result = _search_full_path(package, path_slices[:], [home_base, index_base], [], convention_params, **kwargs)
-    if result: return result
-
-    raise PathNotFound()
+    result = _search_full_path(base_dir, package, path_slices[:], [home_base, index_base], [], convention_params,
+                               errors,
+                               **kwargs)
+    if result:
+        return result
+    msg = 'No module found for path: %s' % path
+    if errors:
+        separator = '------- Module Search Traceback -------\n'
+        msg = separator.join(errors) + '\n' + msg
+    raise PathNotFound(msg)
 
 
 def to_handler(path, convention_params={}, **kwargs):
+    base_dir = os.path.dirname(importlib.import_module(package_base).__file__)
+    base_dir = os.path.join(base_dir, '..')
     decoded_path = urllib.unquote(path)
     path_slices = [d for d in decoded_path.split("/") if d != ""]
+    errors = []
     #    Try importing package.handler.method
-    return _maybe_import(package_base, path_slices, convention_params, **kwargs)
+    return _maybe_import(path, base_dir, package_base, path_slices, convention_params, errors, **kwargs)
 
 
 def _build_params(*params):
@@ -123,6 +147,14 @@ def _build_params(*params):
 
 
 def to_path(handler, *params, **query_params):
+    '''
+    given a handler (function, module or package) build its respective path
+    all params are going to be quoted and joined to the path
+    query_params dict will be used to build the query_string of the path
+
+    Ex: handler = module.function, params =['a','b'], query_params={'arg'=1,'arg2'=2} will return
+    /module/function/a/b?arg1=1&args2=2
+    '''
     params = _build_params(*params)
 
     if inspect.ismodule(handler):
