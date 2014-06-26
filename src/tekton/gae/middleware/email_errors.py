@@ -66,17 +66,6 @@ def send_error_to_admins(exception, handler, render):
                              body=body)
 
 
-def execute(next_process, handler, dependencies, **kwargs):
-    try:
-        next_process(dependencies, **kwargs)
-    except PathNotFound, e:
-        handler.response.set_status(404)
-        send_error_to_admins(e, handler, dependencies['_write_tmpl'])
-    except BaseException, e:
-        handler.response.status_code = 400
-        send_error_to_admins(e, handler, dependencies['_write_tmpl'])
-
-
 class EmailMiddleware(Middleware):
     def handle_error(self, exception):
         if isinstance(exception, PathNotFound):
