@@ -19,7 +19,7 @@ class JsonUnsecureResponse(JsonResponse):
         super(JsonUnsecureResponse, self).__init__(context, secure_prefix)
 
 
-class JsonResponseMiddlweare(Middleware):
+class JsonResponseMiddleware(Middleware):
     def set_up(self):
         fcn_response = self.dependencies['_fcn_response']
         if isinstance(fcn_response, JsonResponse):

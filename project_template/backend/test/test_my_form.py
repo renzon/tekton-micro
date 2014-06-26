@@ -19,7 +19,7 @@ class FormTests(unittest.TestCase):
         my_form.index(write_tmpl_mock, 'Renzo')
 
         # Assertions
-        self.assertEqual('templates/form.html', params.get('template_name'), 'Wrong template')
+        self.assertEqual('templates/my_form.html', params.get('template_name'), 'Wrong template')
         self.assertDictEqual({'name': 'Renzo'}, params.get('values'), 'Wrong template values')
 
 

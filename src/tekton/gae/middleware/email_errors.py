@@ -31,7 +31,7 @@ def get_apis_statuses(e):
     return statuses
 
 
-def send_error_to_admins(exception, handler, write_tmpl):
+def send_error_to_admins(exception, handler, render):
     import settings  # workaround. See https://github.com/renzon/zenwarch/issues/3
 
     tb = traceback.format_exc()
@@ -39,7 +39,7 @@ def send_error_to_admins(exception, handler, write_tmpl):
 
     logging.error(errmsg)
     logging.error(tb)
-    write_tmpl("/templates/error.html")
+    handler.response.write(render("/templates/error.html"))
     appid = app_identity.get_application_id()
 
     subject = 'ERROR in %s: [%s] %s' % (appid, handler.request.path, errmsg)
@@ -81,8 +81,8 @@ class EmailMiddleware(Middleware):
     def handle_error(self, exception):
         if isinstance(exception, PathNotFound):
             self.handler.response.set_status(404)
-            send_error_to_admins(exception, self.handler, self.dependencies['_write_tmpl'])
+            send_error_to_admins(exception, self.handler, self.dependencies['_render'])
         else:
             self.handler.response.set_status(400)
-            send_error_to_admins(exception, self.handler, self.dependencies['_write_tmpl'])
+            send_error_to_admins(exception, self.handler, self.dependencies['_render'])
 
