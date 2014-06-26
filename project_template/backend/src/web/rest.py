@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
+from tekton.gae.middleware.json_middleware import JsonResponse
 
 
-def items(_json):
-    _json({'data': [1, 2, 3]})
+def items():
+    JsonResponse({'data': [1, 2, 3]})

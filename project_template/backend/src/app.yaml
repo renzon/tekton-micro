@@ -27,6 +27,18 @@ handlers:
 - url: /
   script: convention.app
 
+- url: /robots.txt
+  static_files: web/static/robots.txt
+  upload: web/static/robots.txt
+
+- url: /favicon.ico
+  static_files: web/static/img/favicon.ico
+  upload: web/static/img/favicon.ico
+
+- url: /(.*)static(.*)
+  static_files: web/\1static\2
+  upload: web/.*static.*
+
 - url: /(.*)static(.*)
   static_files: web/\1static\2
   upload: web/.*static.*
