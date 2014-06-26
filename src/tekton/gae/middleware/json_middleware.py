@@ -21,15 +21,15 @@ class JsonUnsecureResponse(JsonResponse):
 
 class JsonResponseMiddlweare(Middleware):
     def set_up(self):
-        fcn_response=self.dependencies['_fcn_response']
-        if isinstance(fcn_response,JsonResponse):
+        fcn_response = self.dependencies['_fcn_response']
+        if isinstance(fcn_response, JsonResponse):
             resp = self.handler.response
             resp.headers[str('Content-Type')] = str('application/json')
             return resp.write(fcn_response.to_json())
+        return True  # after response, there is no need to look for more middlewares
 
 
-
-# this class is here for backward compatibility only
+# this class is here for backward compatibility only, can be removed
 class JsonMiddleare(Middleware):
     def set_up(self):
         def _json(dct, prefix=")]}',\n"):
