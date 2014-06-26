@@ -14,28 +14,11 @@ def build_middleware(setup_return=False, execute_tear_down_on_error=False):
 
 
 class MiddlewareTests(unittest.TestCase):
-    def test_execute(self):
-        mid_flags = [False, False]
-
-        def middleware_1(next_process, handler, dependencies, **kwargs):
-            mid_flags[0] = True
-            dependencies['_foo'] = 'foo'
-            next_process(dependencies, kwarg_1='bar1')
-
-        def middleware_2(next_process, handler, dependencies, **kwargs):
-            mid_flags[1] = True
-            self.assertEqual('foo', dependencies['_foo'])
-            self.assertDictEqual({'kwarg_1': 'bar1'}, kwargs)
-            next_process(dependencies, **kwargs)
-
-        middleware.execute([middleware_1, middleware_2], None)
-        self.assertListEqual([True, True], mid_flags)
-
-    def test_successful_execute_2(self):
+    def test_successful_execute(self):
         mid_1_class, mid_1 = build_middleware()
         mid_2_class, mid_2 = build_middleware()
 
-        middleware.execute_2([mid_1_class, mid_2_class], None)
+        middleware.execute([mid_1_class, mid_2_class], None)
         mid_1_class.assert_called_once_with(None, {}, {})
         mid_2_class.assert_called_once_with(None, {}, {})
         mid_1.set_up.assert_called_once_with()
@@ -43,11 +26,11 @@ class MiddlewareTests(unittest.TestCase):
         mid_1.tear_down.assert_called_once_with()
         mid_2.tear_down.assert_called_once_with()
 
-    def test_stop_next_middleware_execute_2(self):
+    def test_stop_next_middleware_execute(self):
         mid_1_class, mid_1 = build_middleware(True)
         mid_2_class, mid_2 = build_middleware()
 
-        middleware.execute_2([mid_1_class, mid_2_class], None)
+        middleware.execute([mid_1_class, mid_2_class], None)
         mid_1_class.assert_called_once_with(None, {}, {})
         self.assertFalse(mid_2_class.called)
         mid_1.set_up.assert_called_once_with()
@@ -65,7 +48,7 @@ class MiddlewareTests(unittest.TestCase):
 
         mid_2.set_up = f
 
-        middleware.execute_2([mid_1_class, mid_2_class, mid_3_class], None)
+        middleware.execute([mid_1_class, mid_2_class, mid_3_class], None)
         mid_1_class.assert_called_once_with(None, {}, {})
         mid_2_class.assert_called_once_with(None, {}, {})
         self.assertFalse(mid_3_class.called)
