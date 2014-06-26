@@ -7,16 +7,6 @@ import tmpl
 from tekton.gae.middleware import Middleware
 
 
-def execute(next_process, handler, dependencies, **kwargs):
-    def write_tmpl(template_name, values=None):
-        values = values or {}
-        return handler.response.write(tmpl.render(template_name, values))
-
-    dependencies["_write_tmpl"] = write_tmpl
-    dependencies["_render"] = tmpl.render
-    next_process(dependencies, **kwargs)
-
-
 class TemplateResponse(ResponseBase):
     def __init__(self, context=None, template_path=None):
         """
@@ -35,7 +25,7 @@ class TemplateMiddleware(Middleware):
 
 
 _TMPL_NOT_FOUND_MSG = '''Template not found
-Looked by convention en /web/templates directory for:
+Looked by convention in /web/templates directory for:
 
 1) %s
 2) %s
