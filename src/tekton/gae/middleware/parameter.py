@@ -14,18 +14,6 @@ def _extract_values(handler, param, default_value=""):
         return param, values
 
 
-def execute(next_process, handler, dependencies, **kwargs):
-    json_header = r'application/json, text/plain, */*'
-    header_value = getattr(handler.request, 'accept', None)
-    header_value = getattr(header_value, 'header_value', None)
-    # AngularJS Call
-    if header_value == json_header and handler.request.body:
-        kwargs.update(json.loads(handler.request.body))
-    else:
-        kwargs.update(dict(_extract_values(handler, a) for a in handler.request.arguments()))
-    next_process(dependencies, **kwargs)
-
-
 class RequestParamsMiddleware(Middleware):
     def set_up(self):
         json_header = r'application/json, text/plain, */*'
