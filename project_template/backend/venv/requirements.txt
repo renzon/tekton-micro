@@ -1,1 +1,1 @@
-tekton==2.4
+tekton==3.0

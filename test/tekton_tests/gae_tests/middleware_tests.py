@@ -60,15 +60,3 @@ class MiddlewareTests(unittest.TestCase):
         self.assertTrue(mid_1.handle_error.called)
         self.assertTrue(mid_2.handle_error.called)
 
-
-    def test_router(self):
-        f = Mock()
-
-        router_middleware.router.to_handler = Mock(return_value=(f, []))
-        handler = Mock()
-        handler.request.path = '/first_handler/fnc'
-        next_process = Mock()
-        router_middleware.execute(next_process, handler, {})
-        f.assert_called_with()
-        next_process.assert_called_with({})
-        router_middleware.router.to_handler.assert_called_with('/first_handler/fnc', {})
