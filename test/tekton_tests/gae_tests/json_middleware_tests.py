@@ -3,21 +3,15 @@ from __future__ import absolute_import, unicode_literals
 import unittest
 
 from mock import Mock
-from tekton.gae.middleware import json_middleware
+from tekton.gae.middleware.json_middleware import JsonResponse, JsonResponseMiddlweare
 
 
 class MiddlewareTests(unittest.TestCase):
-    def test_json(self):
+    def test_json_secure(self):
         handler = Mock()
         handler.response.headers = {}
-        next_process = Mock()
-        dependencies = {}
-        json_middleware.execute(next_process, handler, dependencies)
-        next_process.assert_called_with(dependencies)
-        self.assertTrue('_json' in dependencies)
-        json_dependencie = dependencies['_json']
-        json_dependencie({'param': 1})
+        dependencies = {'_fcn_response': JsonResponse({'param': 1})}
+
+        JsonResponseMiddlweare(handler, dependencies,None).set_up()
         self.assertDictEqual({'Content-Type': 'application/json'}, handler.response.headers)
         handler.response.write.assert_called_with(''')]}\',\n{"param": 1}''')
-        json_dependencie({'param': 1}, prefix='')
-        handler.response.write.assert_called_with('''{"param": 1}''')

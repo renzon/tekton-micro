@@ -21,4 +21,4 @@ class ExecutionMiddleware(Middleware):
     def set_up(self):
         fcn = self.dependencies['_fcn']
         path_args = self.dependencies['_path_args']
-        fcn(*path_args, **self.request_args)
+        self.dependencies['_fcn_response'] = fcn(*path_args, **self.request_args)
