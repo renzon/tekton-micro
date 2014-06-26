@@ -2,18 +2,6 @@
 from __future__ import absolute_import, unicode_literals
 
 
-def execute(midlewares, handler, dependencies=None, **kwargs):
-    if midlewares:
-        dependencies = dependencies or {}
-        current_middleware = midlewares[0]
-
-        def next_process(dependencies, **kwargs):
-            next_middlewares = midlewares[1:]
-            execute(next_middlewares, handler, dependencies, **kwargs)
-
-        current_middleware(next_process, handler, dependencies, **kwargs)
-
-
 class Middleware(object):
     def __init__(self, handler, dependencies, request_args):
         self.dependencies = dependencies
@@ -21,23 +9,23 @@ class Middleware(object):
         self.request_args = request_args
 
     def set_up(self):
-        '''
+        """
         Must return True to stop next middleware execution
-        '''
+        """
         pass
 
     def tear_down(self):
         pass
 
-    def handle_error(self,e):
+    def handle_error(self, e):
         pass
 
 
-def execute_2(middleware_classes, handler):
-    '''
+def execute(middleware_classes, handler):
+    """
     This version of execute uses Object Orientation to keep stack trace clean
     Middlewares must be Middleware classes to be executed
-    '''
+    """
     dependecies = {}
     request_args = {}
     executed_middlewares = []
