@@ -9,6 +9,8 @@ from tekton.gae.middleware.webapp2_dependencies import Webapp2Dependencies
 
 SENDER_EMAIL = 'renzon@gmail.com'
 WEB_BASE_PACKAGE = "web"
+TEMPLATE_404_ERROR = 'error.html'
+TEMPLATE_400_ERROR = 'error.html'
 MIDDLEWARES = [TemplateMiddleware,
                EmailMiddleware,
                Webapp2Dependencies,
