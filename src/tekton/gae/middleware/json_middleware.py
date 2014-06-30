@@ -25,17 +25,8 @@ class JsonResponseMiddleware(Middleware):
         if isinstance(fcn_response, JsonResponse):
             resp = self.handler.response
             resp.headers[str('Content-Type')] = str('application/json')
-            return resp.write(fcn_response.to_json())
-        return True  # after response, there is no need to look for more middlewares
+            resp.write(fcn_response.to_json())
+            return True  # after response, there is no need to look for more middlewares
 
 
-# this class is here for backward compatibility only, can be removed
-class JsonMiddleare(Middleware):
-    def set_up(self):
-        def _json(dct, prefix=")]}',\n"):
-            js = prefix + json.dumps(dct)
-            resp = self.handler.response
-            resp.headers[str('Content-Type')] = str('application/json')
-            return resp.write(js)
 
-        self.dependencies["_json"] = _json

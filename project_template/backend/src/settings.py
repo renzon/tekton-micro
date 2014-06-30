@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
 from tekton.gae.middleware.json_middleware import JsonResponseMiddleware
+from tekton.gae.middleware.redirect import RedirectMiddleware
 from tmpl_middleware import TemplateMiddleware, TemplateWriteMiddleware
 from tekton.gae.middleware.email_errors import EmailMiddleware
 from tekton.gae.middleware.parameter import RequestParamsMiddleware
@@ -18,5 +19,6 @@ MIDDLEWARES = [TemplateMiddleware,
                RouterMiddleware,
                ExecutionMiddleware,
                TemplateWriteMiddleware,
-               JsonResponseMiddleware]
+               JsonResponseMiddleware,
+               RedirectMiddleware]
 
