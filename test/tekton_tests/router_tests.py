@@ -13,10 +13,12 @@ class ToPathTests(TestCase):
     def test_querystring(self):
         query_string = {'foo': 'bar'}
         self.assertEqual("/pack?foo=bar", router.to_path(pack, **query_string))
+        self.assertEqual("/pack?foo=bar", router.to_path('/pack', **query_string))
         query_string = {'foo': 'bar', 'param': 1}
         self.assertEqual("/pack?foo=bar&param=1", router.to_path(pack, **query_string))
+        self.assertEqual("/pack?foo=bar&param=1", router.to_path('/pack', **query_string))
         query_string = {'foo': 'çáê', 'param': 1}
-        self.assertEqual("/pack?foo=%C3%A7%C3%A1%C3%AA&param=1", router.to_path(pack, **query_string))
+        self.assertEqual("/pack?foo=%C3%A7%C3%A1%C3%AA&param=1", router.to_path('/pack', **query_string))
 
     def test_package(self):
         self.assertEqual("/", router.to_path(web_test))

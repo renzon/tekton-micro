@@ -129,7 +129,7 @@ def to_handler(path, convention_params={}, **kwargs):
     decoded_path = urllib.unquote(path)
     path_slices = [d for d in decoded_path.split("/") if d != ""]
     errors = []
-    #    Try importing package.handler.method
+    # Try importing package.handler.method
     return _maybe_import(path, base_dir, package_base, path_slices, convention_params, errors, **kwargs)
 
 
@@ -148,7 +148,7 @@ def _build_params(*params):
 
 def to_path(handler, *params, **query_params):
     '''
-    given a handler (function, module or package) build its respective path
+    given a handler (path as string, function, module or package) build its respective path
     all params are going to be quoted and joined to the path
     query_params dict will be used to build the query_string of the path
 
@@ -157,7 +157,15 @@ def to_path(handler, *params, **query_params):
     '''
     params = _build_params(*params)
 
-    if inspect.ismodule(handler):
+    if query_params:
+        query_string = urllib.urlencode(query_params)
+
+    if isinstance(handler, basestring):
+        path = handler + params
+        if query_params:
+            path += '?' + query_string
+        return path
+    elif inspect.ismodule(handler):
         name = handler.__name__
     else:
         name = handler.__module__ + "/" + handler.__name__
@@ -171,10 +179,10 @@ def to_path(handler, *params, **query_params):
     name = remove_from_end(name, home_index)
     name = remove_from_end(name, index_base)
 
-    if not name: return params or "/"
+    if not name:
+        return params or "/"
     path = name.replace(".", "/") + params
     if query_params:
-        query_string = urllib.urlencode(query_params)
         path += '?' + query_string
     return path
 
