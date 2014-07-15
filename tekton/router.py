@@ -11,7 +11,7 @@ __author__ = 'renzo'
 class PathNotFound(Exception): pass
 
 
-package_base = "web"
+package_base = "routes"
 home_base = "home"
 index_base = "index"
 

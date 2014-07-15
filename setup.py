@@ -105,10 +105,10 @@ def find_package_data(
 
 PACKAGE = "tekton"
 NAME = "tekton"
-DESCRIPTION = "Route your web-app by convention over configuration"
+DESCRIPTION = "Routing web apps by convention"
 AUTHOR = "Renzo Nuccitelli"
 AUTHOR_EMAIL = "renzo.n@gmail.com"
-URL = "https://github.com/renzon/tekton/"
+URL = "https://github.com/renzon/tekton-micro"
 VERSION = __import__(PACKAGE).__version__
 
 
