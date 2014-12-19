@@ -4,7 +4,7 @@ import json
 from tekton.gae.middleware import Middleware
 
 
-def _extract_values(handler, param, default_value=""):
+def _extract_values(handler, request_args, param, default_value=""):
     values = handler.request.get_all(param)
     if param.endswith("[]"):
         return param[:-2], values if values else []
