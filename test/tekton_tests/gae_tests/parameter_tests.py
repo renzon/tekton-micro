@@ -31,20 +31,20 @@ class ExtractValueTests(TestCase):
         self.assertTupleEqual(('single', ['1', '2']), tpl)
 
     def test_indexed_list(self):
-        handler_mock = self.handler_mock('1')
+        handler_mock = self.handler_mock(['1'])
 
         extractor = _ParamExtractor()
         values = extractor._extract_values(handler_mock, 'list_indexed[1]')
         tpl = values
         self.assertTupleEqual(('list_indexed', ['1']), tpl)
 
-        handler_mock = self.handler_mock('3')
+        handler_mock = self.handler_mock(['3'])
 
         tpl = extractor._extract_values(handler_mock, 'list_indexed[3]')
         # Must keep list ordered based on index
         self.assertTupleEqual(('list_indexed', ['1', '3']), tpl)
 
-        handler_mock = self.handler_mock('2')
+        handler_mock = self.handler_mock(['2'])
 
         tpl = extractor._extract_values(handler_mock, 'list_indexed[2]')
         # Must keep list ordered based on index

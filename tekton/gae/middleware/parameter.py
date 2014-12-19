@@ -11,28 +11,33 @@ class _ParamExtractor(object):
         self.indexed_values = defaultdict(list)
         self.indexed_indexes = defaultdict(list)
 
+
     def _extract_values(self, handler, param, default_value=""):
+        def handle_single_value(default_value, param, values):
+            if not values:
+                return param, default_value
+            if len(values) == 1:
+                return param, values[0]
+            return param, values
+
         values = handler.request.get_all(param)
         if param.endswith('[]'):
             return param[:-2], values if values else []
         elif param.endswith(']') and '[' in param:
             try:
                 param_name, param_idx = param[:-1].split('[')
+                _, val = handle_single_value(default_value, param, values)
                 param_idx = int(param_idx)
                 sorted_list = self.indexed_values[param_name]
                 sorted_indexes = self.indexed_indexes[param_name]
                 idx = bisect.bisect_right(sorted_indexes, param_idx)
-                sorted_list.insert(idx, values)
+                sorted_list.insert(idx, val)
                 sorted_indexes.insert(idx, param_idx)
                 return param_name, sorted_list
             except:
                 pass
 
-        if not values:
-            return param, default_value
-        if len(values) == 1:
-            return param, values[0]
-        return param, values
+        return handle_single_value(default_value, param, values)
 
 
 class RequestParamsMiddleware(Middleware):
