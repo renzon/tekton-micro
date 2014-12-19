@@ -9,8 +9,10 @@ def _extract_values(handler, param, default_value=""):
     if param.endswith("[]"):
         return param[:-2], values if values else []
     else:
-        if not values: return param, default_value
-        if len(values) == 1: return param, values[0]
+        if not values:
+            return param, default_value
+        if len(values) == 1:
+            return param, values[0]
         return param, values
 
 
