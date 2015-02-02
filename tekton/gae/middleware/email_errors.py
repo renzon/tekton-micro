@@ -31,33 +31,39 @@ def get_apis_statuses(e):
     return statuses
 
 
-def send_error_to_admins(settings, exception, handler, render, template):
-    tb = traceback.format_exc()
+def send_error_to_admins(settings, exception, handler, render, template, user):
+    trace_back = traceback.format_exc()
     errmsg = exception.message
 
     logging.error(errmsg)
-    logging.error(tb)
+    logging.error(trace_back)
     handler.response.write(render(template))
     appid = app_identity.get_application_id()
 
-    subject = 'ERROR in %s: [%s] %s' % (appid, handler.request.path, errmsg)
+    subject = 'ERROR in %s. Path: %s' % (appid, handler.request.path)
     body = """
+------------- Logged User ------------
+%(user)s
 ------------- request ------------
-%s
+%(request)s
 ----------------------------------
 
 ------------- GET params ---------
-%s
+%(get_params)s
 ----------------------------------
 
 ----------- POST params ----------
-%s
+%(post_params)s
 ----------------------------------
 
 ----------- traceback ------------
-%s
+%(trace_back)s
 ----------------------------------
-""" % (handler.request, handler.request.GET, handler.request.POST, tb)
+""" % {'request': handler.request,
+       'get_params': handler.request.GET,
+       'post_params': handler.request.POST,
+       'trace_back': trace_back,
+       'user': user}
     body += 'API statuses = ' + json.dumps(get_apis_statuses(exception), indent=4)
     mail.send_mail_to_admins(sender=settings.SENDER_EMAIL,
                              subject=subject,
@@ -70,10 +76,13 @@ class EmailMiddleware(Middleware):
 
         if isinstance(exception, PathNotFound):
             self.handler.response.set_status(404)
-            send_error_to_admins(settings, exception, self.handler, self.dependencies['_render'],
-                                 settings.TEMPLATE_404_ERROR)
+            template = settings.TEMPLATE_404_ERROR
         else:
             self.handler.response.set_status(400)
-            send_error_to_admins(settings, exception, self.handler, self.dependencies['_render'],
-                                 settings.TEMPLATE_400_ERROR)
+            template = settings.TEMPLATE_400_ERROR
+        _logged_user = self.dependencies['_logged_user']
+        if _logged_user:
+            _logged_user = _logged_user.to_dict(include=['id', 'email'])
+        send_error_to_admins(settings, exception, self.handler, self.dependencies['_render'],
+                             template, _logged_user)
 
