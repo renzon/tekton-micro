@@ -40,7 +40,7 @@ dev_appserver.py . --port=8088
 
 This command will start the local server on localhost:8088
 
-The framework documentation is on github wiki: https://github.com/renzon/tekton/wiki
+The framework documentation is on github wiki: https://github.com/renzon/tekton-micro/wiki
 
 The lib is available on pypi:
 
